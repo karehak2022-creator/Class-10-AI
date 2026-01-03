@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CBSE Class 10 Board Prep AI</title>
+  <meta name="description" content="NCERT Class 10 focused study aid with quick answers, step-by-step solutions, PYQ frequency and examiner style tips.">
+  <style>
+    :root{
+      --brand:#1f3c88;
+      --muted:#6b7280;
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --radius:10px;
+      --max-width:1100px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,Helvetica,sans-serif;background:var(--bg);color:#111;
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+    }
+    header{background:var(--brand);color:#fff;padding:24px 16px;text-align:center}
+    header h1{margin:0;font-size:1.5rem}
+    header p{margin:6px 0 0;color:rgba(255,255,255,0.9);font-size:0.95rem}
+
+    .container{max-width:var(--max-width);margin:26px auto;padding:20px}
+
+    /* Search */
+    .search-form{display:flex;gap:10px;align-items:center}
+    .search-input{flex:1;padding:14px;border-radius:10px;border:1px solid #e6e9ef;background:var(--card);font-size:1rem}
+    .search-input:focus{outline:3px solid rgba(31,60,136,0.18);border-color:var(--brand)}
+    .search-button{background:var(--brand);color:#fff;border:none;padding:12px 18px;border-radius:10px;font-weight:600;cursor:pointer}
+    .search-button:focus{outline:3px solid rgba(31,60,136,0.2)}
+
+    /* Tabs (pure CSS using radio inputs) */
+    .tabs{margin-top:20px;background:var(--card);padding:14px;border-radius:var(--radius);box-shadow:0 6px 18px rgba(16,24,40,0.06)}
+    .tab-list{display:flex;gap:8px;flex-wrap:wrap}
+
+    .tab-input{position:absolute;left:-9999px}
+
+    .tab-label{
+      display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;cursor:pointer;background:transparent;border:1px solid transparent;color:var(--muted);font-weight:600;font-size:0.95rem
+    }
+    .tab-label:focus{outline:3px solid rgba(31,60,136,0.12);outline-offset:2px}
+
+    /* Show selected tab */
+    .tab-input:checked + .tab-label{background:var(--brand);color:#fff;border-color:rgba(0,0,0,0.04)}
+
+    /* Panels */
+    .panels{margin-top:14px}
+    .tab-panel{display:none;padding:18px;border-radius:8px;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid #f1f5f9}
+    .tab-input:checked + .tab-label + .tab-panel{display:block}
+
+    /* Content styles */
+    .meta{color:var(--muted);font-size:0.95rem;margin-bottom:8px}
+    .panel h3{margin-top:0}
+    ul{margin:0;padding-left:1.25rem}
+
+    footer{margin-top:24px;text-align:center;color:var(--muted);font-size:0.9rem}
+
+    /* Responsive */
+    @media (max-width:640px){
+      header h1{font-size:1.2rem}
+      .tab-label{flex:1;text-align:center;padding:10px 8px;font-size:0.9rem}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>CBSE Class 10 Board Prep AI</h1>
+    <p>NCERT Only • Board Focused • Examiner-style answers</p>
+  </header>
+
+  <main class="container">
+    <form class="search-form" role="search" aria-label="Search for NCERT Class 10 questions" onsubmit="return false">
+      <input class="search-input" type="search" placeholder="Ask any NCERT Class 10 CBSE question... e.g. 'Photosynthesis diagram explanation'" aria-label="Search questions">
+      <button class="search-button" type="submit">Search</button>
+    </form>
+
+    <div class="tabs" role="region" aria-label="Answer views">
+      <div class="tab-list" role="tablist" aria-label="Answer tabs">
+
+        <!-- Quick Answer -->
+        <input class="tab-input" id="tab-quick" type="radio" name="tabs" checked>
+        <label class="tab-label" for="tab-quick" id="label-quick">Quick Answer</label>
+        <section class="tab-panel panel" id="panel-quick" aria-labelledby="label-quick" role="tabpanel">
+          <p class="meta">Short revision answer for quick recall</p>
+          <h3>Quick answer area</h3>
+          <p>Clear, concise bullet points and one-line answers optimized for last-minute revision and quick reference.</p>
+        </section>
+
+        <!-- Step-by-Step -->
+        <input class="tab-input" id="tab-step" type="radio" name="tabs">
+        <label class="tab-label" for="tab-step" id="label-step">Step-by-Step</label>
+        <section class="tab-panel panel" id="panel-step" aria-labelledby="label-step" role="tabpanel">
+          <p class="meta">Board-style stepwise solution with reasoning</p>
+          <h3>Step-by-step solution</h3>
+          <ol>
+            <li>State the relevant NCERT concept or definition.</li>
+            <li>Show any necessary calculations or diagrams.</li>
+            <li>Conclude with the final answer and exam tips.</li>
+          </ol>
+        </section>
+
+        <!-- Board Format -->
+        <input class="tab-input" id="tab-board" type="radio" name="tabs">
+        <label class="tab-label" for="tab-board" id="label-board">Board Format</label>
+        <section class="tab-panel panel" id="panel-board" aria-labelledby="label-board" role="tabpanel">
+          <p class="meta">Examiner-focused format and mark allocation</p>
+          <h3>Board format</h3>
+          <p>Answer templates and structure tailored to CBSE marking schemes: introduction, main points, and concise concluding line.</p>
+        </section>
+
+        <!-- PYQ Frequency -->
+        <input class="tab-input" id="tab-pyq" type="radio" name="tabs">
+        <label class="tab-label" for="tab-pyq" id="label-pyq">PYQ Frequency</label>
+        <section class="tab-panel panel" id="panel-pyq" aria-labelledby="label-pyq" role="tabpanel">
+          <p class="meta">How often the topic appears in past exams</p>
+          <h3>Previous year question frequency</h3>
+          <p>Short summary of PYQ occurrence and suggested focus areas for revision.</p>
+        </section>
+
+        <!-- Key Points -->
+        <input class="tab-input" id="tab-key" type="radio" name="tabs">
+        <label class="tab-label" for="tab-key" id="label-key">Key Points</label>
+        <section class="tab-panel panel" id="panel-key" aria-labelledby="label-key" role="tabpanel">
+          <p class="meta">High-yield facts and formulas</p>
+          <h3>Key points</h3>
+          <ul>
+            <li>Remember definitions exactly as NCERT provides.</li>
+            <li>Use diagrams where requested and label them neatly.</li>
+          </ul>
+        </section>
+
+        <!-- Common Mistakes -->
+        <input class="tab-input" id="tab-mistakes" type="radio" name="tabs">
+        <label class="tab-label" for="tab-mistakes" id="label-mistakes">Common Mistakes</label>
+        <section class="tab-panel panel" id="panel-mistakes" aria-labelledby="label-mistakes" role="tabpanel">
+          <p class="meta">Things students often get wrong</p>
+          <h3>Common mistakes</h3>
+          <ul>
+            <li>Mixing similar concepts—write short distinguishing lines.</li>
+            <li>Forgetting units in calculations—always include units.</li>
+          </ul>
+        </section>
+
+        <!-- Related Questions -->
+        <input class="tab-input" id="tab-related" type="radio" name="tabs">
+        <label class="tab-label" for="tab-related" id="label-related">Related Questions</label>
+        <section class="tab-panel panel" id="panel-related" aria-labelledby="label-related" role="tabpanel">
+          <p class="meta">Quick links to similar NCERT questions</p>
+          <h3>Related questions</h3>
+          <ul>
+            <li>Question 1 — Short hint</li>
+            <li>Question 2 — Short hint</li>
+          </ul>
+        </section>
+
+      </div><!-- .tab-list -->
+    </div><!-- .tabs -->
+
+    <footer>
+      © 2026 CBSE Class 10 Board Prep • Built for maximum board marks
+    </footer>
+  </main>
+</body>
+</html>
