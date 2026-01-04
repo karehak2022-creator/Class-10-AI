@@ -99,8 +99,8 @@
   </main>
 
   <script>
-    // 1. APNI API KEY YAHAN DALEIN
-    const API_KEY = AIzaSyCrFqPlds8FtYh9fLIRTojZB7NuPDaHV2o
+    // 1. APNI API KEY YAHAN DALEIN (Inverted commas ke beech mein)
+    const API_KEY = "AIzaSyCrFqPlds8FtYh9fLIRTojZB7NuPDaHV2o"; 
 
     async function handleSearch(event) {
         event.preventDefault();
@@ -108,41 +108,48 @@
         const input = document.getElementById('userInput');
         const btn = document.getElementById('sendBtn');
         const status = document.getElementById('status-msg');
-        const query = input.value;
+        const query = input.value.trim();
 
         if(!query) return;
 
         // UI Update: Loading start
         btn.disabled = true;
         status.style.display = "block";
+        status.innerText = "AI is thinking... 📚";
 
+        // Gemini API URL
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
         
-        const prompt = `You are a CBSE Class 10 Tutor. For the question: "${query}", provide 3 parts separated by "###": 
-        1. A very short quick answer. 
-        2. A detailed step-by-step NCERT solution. 
-        3. A board exam marking scheme format. 
-        Answer in simple Hinglish.`;
+        const promptContext = `You are a professional CBSE Class 10 Tutor. 
+        For the question: "${query}", provide a detailed answer in Hinglish. 
+        Structure it so it fits into 'Quick Answer', 'Step-by-Step', and 'Board Format' sections.`;
 
         try {
             const response = await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: promptContext }] }]
+                })
             });
 
             const data = await response.json();
-            const fullText = data.candidates[0].content.parts[0].text;
 
-            // Divide response into parts
-            const parts = fullText.split("###");
-            
-            document.getElementById('res-quick').innerText = parts[0] || "No answer found.";
-            document.getElementById('res-step').innerText = parts[1] || "No steps available.";
-            document.getElementById('res-board').innerText = parts[2] || "No format available.";
+            // Check if response is valid
+            if (data.candidates && data.candidates[0].content.parts[0].text) {
+                const aiResponse = data.candidates[0].content.parts[0].text;
+
+                // Teeno jagah par AI ka jawab bhar dein
+                document.getElementById('res-quick').innerText = aiResponse;
+                document.getElementById('res-step').innerText = "Detailed Explanation: \n" + aiResponse;
+                document.getElementById('res-board').innerText = "Board Exam Tip: Focus on keywords mentioned above.";
+            } else {
+                throw new Error("Invalid response format");
+            }
 
         } catch (error) {
-            alert("Error: Key check karein ya internet connect karein.");
+            console.error("Error:", error);
+            document.getElementById('res-quick').innerText = "Oops! Error aa gaya. Check karein ki API Key sahi hai ya nahi.";
         } finally {
             // UI Update: Loading stop
             btn.disabled = false;
@@ -150,6 +157,7 @@
         }
     }
   </script>
+  
 </body>
 </html>
 
