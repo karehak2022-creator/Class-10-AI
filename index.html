@@ -98,65 +98,58 @@
     </footer>
   </main>
 
-  <script>
-    // 1. APNI API KEY YAHAN DALEIN (Inverted commas ke beech mein)
-    const API_KEY = "AIzaSyCrFqPlds8FtYh9fLIRTojZB7NuPDaHV2o"; 
+     <script>
+        const API_KEY = "AIzaSyCrFqPlds8FtYh9fLIRTojZB7NuPDaHV2o"; 
 
-    async function handleSearch(event) {
-        event.preventDefault();
-        
-        const input = document.getElementById('userInput');
-        const btn = document.getElementById('sendBtn');
-        const status = document.getElementById('status-msg');
-        const query = input.value.trim();
+        async function handleSearch(event) {
+            event.preventDefault();
+            
+            const input = document.getElementById('userInput');
+            const btn = document.getElementById('sendBtn');
+            const status = document.getElementById('status-msg');
+            const query = input.value.trim();
 
-        if(!query) return;
+            if(!query) return;
 
-        // UI Update: Loading start
-        btn.disabled = true;
-        status.style.display = "block";
-        status.innerText = "AI is thinking... 📚";
+            btn.disabled = true;
+            status.style.display = "block";
+            status.innerText = "AI is thinking... 📚";
 
-        // Gemini API URL
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
-        
-        const promptContext = `You are a professional CBSE Class 10 Tutor. 
-        For the question: "${query}", provide a detailed answer in Hinglish. 
-        Structure it so it fits into 'Quick Answer', 'Step-by-Step', and 'Board Format' sections.`;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+            
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: `Explain this for Class 10 CBSE: ${query}` }] }]
+                    })
+                });
 
-        try {
-            const response = await fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: promptContext }] }]
-                })
-            });
+                const data = await response.json();
 
-            const data = await response.json();
+                if (data.error) {
+                    alert("API Error: " + data.error.message);
+                    document.getElementById('res-quick').innerText = "Error: " + data.error.message;
+                } else if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    const aiResponse = data.candidates[0].content.parts[0].text;
+                    document.getElementById('res-quick').innerText = aiResponse;
+                    document.getElementById('res-step').innerText = aiResponse;
+                    document.getElementById('res-board').innerText = "Focus on NCERT keywords.";
+                }
 
-            // Check if response is valid
-            if (data.candidates && data.candidates[0].content.parts[0].text) {
-                const aiResponse = data.candidates[0].content.parts[0].text;
-
-                // Teeno jagah par AI ka jawab bhar dein
-                document.getElementById('res-quick').innerText = aiResponse;
-                document.getElementById('res-step').innerText = "Detailed Explanation: \n" + aiResponse;
-                document.getElementById('res-board').innerText = "Board Exam Tip: Focus on keywords mentioned above.";
-            } else {
-                throw new Error("Invalid response format");
+            } catch (error) {
+                alert("Network/Browser Error: " + error.message);
+                document.getElementById('res-quick').innerText = "Check your internet.";
+            } finally {
+                btn.disabled = false;
+                status.style.display = "none";
             }
-
-        } catch (error) {
-            console.error("Error:", error);
-            document.getElementById('res-quick').innerText = "Oops! Error aa gaya. Check karein ki API Key sahi hai ya nahi.";
-        } finally {
-            // UI Update: Loading stop
-            btn.disabled = false;
-            status.style.display = "none";
         }
-    }
-  </script>
+    </script>
+</body>
+</html>
+
   
 </body>
 </html>
