@@ -31,39 +31,25 @@
     .search-input{flex:1;padding:14px;border-radius:10px;border:1px solid #e6e9ef;background:var(--card);font-size:1rem}
     .search-input:focus{outline:3px solid rgba(31,60,136,0.18);border-color:var(--brand)}
     .search-button{background:var(--brand);color:#fff;border:none;padding:12px 18px;border-radius:10px;font-weight:600;cursor:pointer}
-    .search-button:focus{outline:3px solid rgba(31,60,136,0.2)}
+    .search-button:disabled{background:#ccc;cursor:not-allowed}
 
-    /* Tabs (pure CSS using radio inputs) */
+    /* Tabs */
     .tabs{margin-top:20px;background:var(--card);padding:14px;border-radius:var(--radius);box-shadow:0 6px 18px rgba(16,24,40,0.06)}
     .tab-list{display:flex;gap:8px;flex-wrap:wrap}
-
     .tab-input{position:absolute;left:-9999px}
-
-    .tab-label{
-      display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;cursor:pointer;background:transparent;border:1px solid transparent;color:var(--muted);font-weight:600;font-size:0.95rem
-    }
-    .tab-label:focus{outline:3px solid rgba(31,60,136,0.12);outline-offset:2px}
-
-    /* Show selected tab */
-    .tab-input:checked + .tab-label{background:var(--brand);color:#fff;border-color:rgba(0,0,0,0.04)}
+    .tab-label{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;cursor:pointer;color:var(--muted);font-weight:600;font-size:0.95rem;border:1px solid transparent}
+    .tab-input:checked + .tab-label{background:var(--brand);color:#fff}
 
     /* Panels */
     .panels{margin-top:14px}
     .tab-panel{display:none;padding:18px;border-radius:8px;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid #f1f5f9}
     .tab-input:checked + .tab-label + .tab-panel{display:block}
 
-    /* Content styles */
-    .meta{color:var(--muted);font-size:0.95rem;margin-bottom:8px}
-    .panel h3{margin-top:0}
-    ul{margin:0;padding-left:1.25rem}
+    /* Loading Spinner */
+    #status-msg{margin-top:10px;font-size:0.9rem;color:var(--brand);font-weight:bold;display:none}
 
     footer{margin-top:24px;text-align:center;color:var(--muted);font-size:0.9rem}
-
-    /* Responsive */
-    @media (max-width:640px){
-      header h1{font-size:1.2rem}
-      .tab-label{flex:1;text-align:center;padding:10px 8px;font-size:0.9rem}
-    }
+    @media (max-width:640px){ .tab-label{flex:1;text-align:center} }
   </style>
 </head>
 <body>
@@ -73,103 +59,97 @@
   </header>
 
   <main class="container">
-    <form class="search-form" role="search" aria-label="Search for NCERT Class 10 questions" onsubmit="return false">
-      <input class="search-input" type="search" placeholder="Ask any NCERT Class 10 CBSE question... e.g. 'Photosynthesis diagram explanation'" aria-label="Search questions">
-      <button class="search-button" type="submit">Search</button>
+    <form class="search-form" onsubmit="handleSearch(event)">
+      <input id="userInput" class="search-input" type="text" placeholder="Ask any NCERT Class 10 CBSE question..." required>
+      <button id="sendBtn" class="search-button" type="submit">Search</button>
     </form>
-<div class="answer-box" id="answerBox">
-  Answer will appear here
-</div>
-    <div class="tabs" role="region" aria-label="Answer views">
-      <div class="tab-list" role="tablist" aria-label="Answer tabs">
+    
+    <div id="status-msg">AI is thinking... 📚</div>
 
-        <!-- Quick Answer -->
+    <div class="tabs">
+      <div class="tab-list">
+
         <input class="tab-input" id="tab-quick" type="radio" name="tabs" checked>
-        <label class="tab-label" for="tab-quick" id="label-quick">Quick Answer</label>
-        <section class="tab-panel panel" id="panel-quick" aria-labelledby="label-quick" role="tabpanel">
-          <p class="meta">Short revision answer for quick recall</p>
-          <h3>Quick answer area</h3>
-          <p>Clear, concise bullet points and one-line answers optimized for last-minute revision and quick reference.</p>
+        <label class="tab-label" for="tab-quick">Quick Answer</label>
+        <section class="tab-panel" id="panel-quick">
+          <p class="meta">Short revision answer</p>
+          <div id="res-quick">Pehle koi sawal puchiye...</div>
         </section>
 
-        <!-- Step-by-Step -->
         <input class="tab-input" id="tab-step" type="radio" name="tabs">
-        <label class="tab-label" for="tab-step" id="label-step">Step-by-Step</label>
-        <section class="tab-panel panel" id="panel-step" aria-labelledby="label-step" role="tabpanel">
-          <p class="meta">Board-style stepwise solution with reasoning</p>
-          <h3>Step-by-step solution</h3>
-          <ol>
-            <li>State the relevant NCERT concept or definition.</li>
-            <li>Show any necessary calculations or diagrams.</li>
-            <li>Conclude with the final answer and exam tips.</li>
-          </ol>
+        <label class="tab-label" for="tab-step">Step-by-Step</label>
+        <section class="tab-panel" id="panel-step">
+          <p class="meta">Board-style detailed solution</p>
+          <div id="res-step">Steps yahan dikhenge.</div>
         </section>
 
-        <!-- Board Format -->
         <input class="tab-input" id="tab-board" type="radio" name="tabs">
-        <label class="tab-label" for="tab-board" id="label-board">Board Format</label>
-        <section class="tab-panel panel" id="panel-board" aria-labelledby="label-board" role="tabpanel">
-          <p class="meta">Examiner-focused format and mark allocation</p>
-          <h3>Board format</h3>
-          <p>Answer templates and structure tailored to CBSE marking schemes: introduction, main points, and concise concluding line.</p>
+        <label class="tab-label" for="tab-board">Board Format</label>
+        <section class="tab-panel" id="panel-board">
+          <p class="meta">Examiner-focused structure</p>
+          <div id="res-board">Marking scheme ke hisab se format.</div>
         </section>
 
-        <!-- PYQ Frequency -->
-        <input class="tab-input" id="tab-pyq" type="radio" name="tabs">
-        <label class="tab-label" for="tab-pyq" id="label-pyq">PYQ Frequency</label>
-        <section class="tab-panel panel" id="panel-pyq" aria-labelledby="label-pyq" role="tabpanel">
-          <p class="meta">How often the topic appears in past exams</p>
-          <h3>Previous year question frequency</h3>
-          <p>Short summary of PYQ occurrence and suggested focus areas for revision.</p>
-        </section>
-
-        <!-- Key Points -->
-        <input class="tab-input" id="tab-key" type="radio" name="tabs">
-        <label class="tab-label" for="tab-key" id="label-key">Key Points</label>
-        <section class="tab-panel panel" id="panel-key" aria-labelledby="label-key" role="tabpanel">
-          <p class="meta">High-yield facts and formulas</p>
-          <h3>Key points</h3>
-          <ul>
-            <li>Remember definitions exactly as NCERT provides.</li>
-            <li>Use diagrams where requested and label them neatly.</li>
-          </ul>
-        </section>
-
-        <!-- Common Mistakes -->
-        <input class="tab-input" id="tab-mistakes" type="radio" name="tabs">
-        <label class="tab-label" for="tab-mistakes" id="label-mistakes">Common Mistakes</label>
-        <section class="tab-panel panel" id="panel-mistakes" aria-labelledby="label-mistakes" role="tabpanel">
-          <p class="meta">Things students often get wrong</p>
-          <h3>Common mistakes</h3>
-          <ul>
-            <li>Mixing similar concepts—write short distinguishing lines.</li>
-            <li>Forgetting units in calculations—always include units.</li>
-          </ul>
-        </section>
-
-        <!-- Related Questions -->
-        <input class="tab-input" id="tab-related" type="radio" name="tabs">
-        <label class="tab-label" for="tab-related" id="label-related">Related Questions</label>
-        <section class="tab-panel panel" id="panel-related" aria-labelledby="label-related" role="tabpanel">
-          <p class="meta">Quick links to similar NCERT questions</p>
-          <h3>Related questions</h3>
-          <ul>
-            <li>Question 1 — Short hint</li>
-            <li>Question 2 — Short hint</li>
-          </ul>
-        </section>
-
-      </div><!-- .tab-list -->
-    </div><!-- .tabs -->
+      </div>
+    </div>
 
     <footer>
-      © 2026 CBSE Class 10 Board Prep • Built for maximum board marks
+      © 2026 CBSE Class 10 Board Prep AI • Powered by Gemini
     </footer>
   </main>
 
-</main>
+  <script>
+    // 1. APNI API KEY YAHAN DALEIN
+    const API_KEY = AIzaSyCrFqPlds8FtYh9fLIRTojZB7NuPDaHV2o
 
-<script src="script.js"></script>
+    async function handleSearch(event) {
+        event.preventDefault();
+        
+        const input = document.getElementById('userInput');
+        const btn = document.getElementById('sendBtn');
+        const status = document.getElementById('status-msg');
+        const query = input.value;
+
+        if(!query) return;
+
+        // UI Update: Loading start
+        btn.disabled = true;
+        status.style.display = "block";
+
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+        
+        const prompt = `You are a CBSE Class 10 Tutor. For the question: "${query}", provide 3 parts separated by "###": 
+        1. A very short quick answer. 
+        2. A detailed step-by-step NCERT solution. 
+        3. A board exam marking scheme format. 
+        Answer in simple Hinglish.`;
+
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            });
+
+            const data = await response.json();
+            const fullText = data.candidates[0].content.parts[0].text;
+
+            // Divide response into parts
+            const parts = fullText.split("###");
+            
+            document.getElementById('res-quick').innerText = parts[0] || "No answer found.";
+            document.getElementById('res-step').innerText = parts[1] || "No steps available.";
+            document.getElementById('res-board').innerText = parts[2] || "No format available.";
+
+        } catch (error) {
+            alert("Error: Key check karein ya internet connect karein.");
+        } finally {
+            // UI Update: Loading stop
+            btn.disabled = false;
+            status.style.display = "none";
+        }
+    }
+  </script>
 </body>
 </html>
-  
+
